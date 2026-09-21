@@ -27,7 +27,7 @@ public class PlayerAnimator : MonoBehaviour
     {
         if (playerController != null && animator != null && playerController.IsJumpPressed)
         {
-            animator.SetBool(JumpParameter, playerController.IsJumpPressed);
+            animator.SetTrigger("Jump");
             Debug.Log("Salto");
         }
     }

@@ -5,8 +5,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private PlayerController playerController;
     [SerializeField] private Rigidbody rb;
     [SerializeField] private float velocity = 5f;
-    [SerializeField] private float jumpForce = 7f;
-    [SerializeField] private float rotationSpeed = 10f;
+    [SerializeField] private float jumpForce = 3f;
+    [SerializeField] private float rotationSpeed = 20f;
 
     [Header("Doble Salto & Suelo")]
     [SerializeField] private Transform groundCheck;
@@ -24,7 +24,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.angularVelocity = Vector3.zero; // Evita que el Rigidbody rote debido a colisiones
+        rb.angularVelocity = Vector3.zero; 
         CheckGround();
         Move();
         Rotate();
@@ -51,11 +51,24 @@ public class PlayerMovement : MonoBehaviour
     private void Move()
     {
         float speed = velocity * currentVelocityMultiplier;
-        rb.linearVelocity = new Vector3(
-            playerController.MoveValue.x * speed,
-            rb.linearVelocity.y,
-            playerController.MoveValue.y * speed
-        );
+       Vector2 input = playerController.MoveValue;
+
+if (input.sqrMagnitude > 1f)
+{
+    input.Normalize();
+}
+
+Vector3 targetVelocity = new Vector3(
+    input.x * speed,
+    rb.linearVelocity.y,
+    input.y * speed
+);
+
+rb.linearVelocity = Vector3.Lerp(
+    rb.linearVelocity,
+    targetVelocity,
+    10f * Time.fixedDeltaTime
+);
     }
 
     private void Rotate()
