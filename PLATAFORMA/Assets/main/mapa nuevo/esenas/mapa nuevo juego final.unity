@@ -168602,6 +168602,7 @@ GameObject:
   - component: {fileID: 784388608}
   - component: {fileID: 784388607}
   - component: {fileID: 784388606}
+  - component: {fileID: 784388609}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -168670,6 +168671,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &784388609
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 784388605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f09d439edbd28194ebec30052d22a021, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HealthBarUI
+  healthBarFill: {fileID: 1388747772}
+  playerStats: {fileID: 1632900453}
 --- !u!1001 &785546114
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -309872,8 +309887,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f09d439edbd28194ebec30052d22a021, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthBarUI
-  healthBarFill: {fileID: 0}
-  playerStats: {fileID: 0}
+  healthBarFill: {fileID: 1388747772}
+  playerStats: {fileID: 1632900453}
 --- !u!1001 &1388879981
 PrefabInstance:
   m_ObjectHideFlags: 0
