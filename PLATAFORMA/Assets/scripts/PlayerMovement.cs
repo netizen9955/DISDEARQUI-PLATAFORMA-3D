@@ -100,7 +100,7 @@ rb.linearVelocity = Vector3.Lerp(
                 hasDoubleJumped = true;
             }
 
-            playerController.IsJumpPressed = false;
+            playerController.ResetJumpPressed();
         }
     }
 

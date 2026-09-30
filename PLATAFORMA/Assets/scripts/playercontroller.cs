@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour
     private InputAction jumpAction;
 
     public Vector2 MoveValue { get; private set; }
-    public bool IsJumpPressed { get; set; }
+    public bool IsJumpPressed { get; private set; }
 
     void Awake()
     {
@@ -23,5 +23,11 @@ public class PlayerController : MonoBehaviour
         {
             IsJumpPressed = true;
         }
+    }
+
+    // Reinicia el estado del salto
+    public void ResetJumpPressed()
+    {
+        IsJumpPressed = false;
     }
 }
