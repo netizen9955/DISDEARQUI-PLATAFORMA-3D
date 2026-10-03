@@ -5,14 +5,14 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private PlayerController playerController;
     [SerializeField] private Rigidbody rb;
     [SerializeField] private float velocity = 5f;
-    [SerializeField] private float jumpForce = 3f;
+    [SerializeField] private float jumpForce = 5f;
     [SerializeField] private float rotationSpeed = 20f;
 
     [Header("Doble Salto & Suelo")]
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
 
-    public bool canDoubleJump = false;
+    public bool canDoubleJump = true;
     private bool hasDoubleJumped = false;
     private bool isGrounded;
     private float currentVelocityMultiplier = 1f;
@@ -28,18 +28,18 @@ public class PlayerMovement : MonoBehaviour
         CheckGround();
         Move();
         Rotate();
-        Jump();
+        HandleJumpPhysics();
     }
 
     private void CheckGround()
     {
         if (groundCheck != null)
         {
-            isGrounded = Physics.CheckSphere(groundCheck.position, 0.2f, groundLayer);
+            isGrounded = Physics.CheckSphere(groundCheck.position, 0.25f, groundLayer);
         }
         else
         {
-            isGrounded = Mathf.Abs(rb.linearVelocity.y) < 0.05f;
+            isGrounded = Mathf.Abs(rb.linearVelocity.y) < 0.1f;
         }
 
         if (isGrounded)
@@ -48,37 +48,48 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    private Vector3 GetCameraRelativeDirection()
+    {
+        Vector2 input = playerController.MoveValue;
+        if (input.sqrMagnitude > 1f) input.Normalize();
+
+        Transform mainCam = Camera.main.transform;
+        Vector3 camForward = mainCam.forward;
+        Vector3 camRight = mainCam.right;
+
+        camForward.y = 0f;
+        camRight.y = 0f;
+        camForward.Normalize();
+        camRight.Normalize();
+
+        return (camRight * input.x) + (camForward * input.y);
+    }
+
     private void Move()
     {
         float speed = velocity * currentVelocityMultiplier;
-       Vector2 input = playerController.MoveValue;
+        Vector3 moveDir = GetCameraRelativeDirection();
 
-if (input.sqrMagnitude > 1f)
-{
-    input.Normalize();
-}
+        Vector3 targetVelocity = new Vector3(
+            moveDir.x * speed,
+            rb.linearVelocity.y,
+            moveDir.z * speed
+        );
 
-Vector3 targetVelocity = new Vector3(
-    input.x * speed,
-    rb.linearVelocity.y,
-    input.y * speed
-);
-
-rb.linearVelocity = Vector3.Lerp(
-    rb.linearVelocity,
-    targetVelocity,
-    10f * Time.fixedDeltaTime
-);
+        rb.linearVelocity = Vector3.Lerp(
+            rb.linearVelocity,
+            targetVelocity,
+            15f * Time.fixedDeltaTime
+        );
     }
 
     private void Rotate()
     {
-        Vector2 moveInput = playerController.MoveValue;
+        Vector3 moveDir = GetCameraRelativeDirection();
 
-        if (moveInput.sqrMagnitude > 0.01f)
+        if (moveDir.sqrMagnitude > 0.01f)
         {
-            Vector3 direction = new Vector3(moveInput.x, 0f, moveInput.y);
-            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            Quaternion targetRotation = Quaternion.LookRotation(moveDir);
 
             rb.MoveRotation(
                 Quaternion.Slerp(rb.rotation, targetRotation, rotationSpeed * Time.fixedDeltaTime)
@@ -86,9 +97,9 @@ rb.linearVelocity = Vector3.Lerp(
         }
     }
 
-    private void Jump()
+    private void HandleJumpPhysics()
     {
-        if (playerController.IsJumpPressed)
+        if (playerController != null && playerController.IsJumpPressed)
         {
             if (isGrounded)
             {
@@ -99,14 +110,14 @@ rb.linearVelocity = Vector3.Lerp(
                 ExecuteJump();
                 hasDoubleJumped = true;
             }
-
-            playerController.ResetJumpPressed();
         }
     }
 
     private void ExecuteJump()
     {
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, rb.linearVelocity.z);
+        
+        playerController.UseJump();
     }
 
     public void SetSpeedMultiplier(float multiplier)

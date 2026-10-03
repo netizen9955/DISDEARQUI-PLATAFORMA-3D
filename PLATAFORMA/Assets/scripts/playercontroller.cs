@@ -17,16 +17,18 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        MoveValue = moveAction.ReadValue<Vector2>();
+        if (moveAction != null)
+        {
+            MoveValue = moveAction.ReadValue<Vector2>();
+        }
 
-        if (jumpAction.WasPressedThisFrame())
+        if (jumpAction != null && jumpAction.WasPressedThisFrame())
         {
             IsJumpPressed = true;
         }
     }
 
-    // Reinicia el estado del salto
-    public void ResetJumpPressed()
+    public void UseJump()
     {
         IsJumpPressed = false;
     }
